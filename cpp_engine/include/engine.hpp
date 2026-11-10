@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <algorithm>
 #include <cctype>
@@ -12,6 +12,26 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <sstream>
+
+inline std::string jsonEscape(const std::string& value) {
+    std::ostringstream out;
+    for (unsigned char c : value) {
+        switch (c) {
+            case '"': out << "\""; break;
+            case '\\': out << "\\"; break;
+            case '\n': out << "\\n"; break;
+            case '\r': out << "\\r"; break;
+            case '\t': out << "\\t"; break;
+            default:
+                if (c < 0x20) {
+                    const char* hex = "0123456789abcdef";
+                    out << "\\u00" << hex[c >> 4] << hex[c & 0x0f];
+                } else out << static_cast<char>(c);
+        }
+    }
+    return out.str();
+}
 
 struct Product {
     std::string id;
@@ -37,6 +57,7 @@ private:
     };
 
     Node* root = nullptr;
+    std::vector<std::pair<std::string, double>> rotationEvents;
 
     int height(Node* n) const {
         return n ? n->height : 0;
@@ -85,18 +106,24 @@ private:
         updateHeight(node);
         int b = balance(node);
 
-        if (b > 1 && price < node->left->price)
+        if (b > 1 && price < node->left->price) {
+            rotationEvents.push_back({"LL", node->price});
             return rotateRight(node);
+        }
 
-        if (b < -1 && price > node->right->price)
+        if (b < -1 && price > node->right->price) {
+            rotationEvents.push_back({"RR", node->price});
             return rotateLeft(node);
+        }
 
         if (b > 1 && price > node->left->price) {
+            rotationEvents.push_back({"LR", node->price});
             node->left = rotateLeft(node->left);
             return rotateRight(node);
         }
 
         if (b < -1 && price < node->right->price) {
+            rotationEvents.push_back({"RL", node->price});
             node->right = rotateRight(node->right);
             return rotateLeft(node);
         }
@@ -127,6 +154,23 @@ private:
         delete node;
     }
 
+    void writeNodeJson(std::ostream& out, Node* node) const {
+        if (!node) { out << "null"; return; }
+        out << "{\"price\":" << node->price
+            << ",\"height\":" << node->height
+            << ",\"balance\":" << balance(node)
+            << ",\"productIds\":[";
+        for (std::size_t i = 0; i < node->productIds.size(); ++i) {
+            if (i) out << ",";
+            out << "\"" << jsonEscape(node->productIds[i]) << "\"";
+        }
+        out << "],\"left\":";
+        writeNodeJson(out, node->left);
+        out << ",\"right\":";
+        writeNodeJson(out, node->right);
+        out << "}";
+    }
+
 public:
     ~AVLTree() { destroy(root); }
 
@@ -138,6 +182,18 @@ public:
         std::vector<std::string> result;
         rangeSearch(root, low, high, result);
         return result;
+    }
+
+    void writeSnapshot(std::ostream& out) const { writeNodeJson(out, root); }
+
+    void writeRotationEvents(std::ostream& out) const {
+        out << "[";
+        for (std::size_t i = 0; i < rotationEvents.size(); ++i) {
+            if (i) out << ",";
+            out << "{\"type\":\"" << rotationEvents[i].first
+                << "\",\"pivotPrice\":" << rotationEvents[i].second << "}";
+        }
+        out << "]";
     }
 };
 
@@ -196,6 +252,25 @@ public:
 
         return nullptr;
     }
+
+    void writeSnapshot(std::ostream& out) const {
+        out << "[";
+        for (std::size_t i = 0; i < table.size(); ++i) {
+            if (i) out << ",";
+            out << "{\"index\":" << i << ",\"entries\":[";
+            bool first = true;
+            for (const auto& entry : table[i]) {
+                if (!first) out << ",";
+                first = false;
+                out << "{\"key\":\"" << jsonEscape(entry.first)
+                    << "\",\"productId\":\""
+                    << jsonEscape(entry.second.id) << "\",\"name\":\""
+                    << jsonEscape(entry.second.name) << "\"}";
+            }
+            out << "]}";
+        }
+        out << "]";
+    }
 };
 // 3. TRIE: Product name autocomplete
 class ProductTrie {
@@ -225,6 +300,28 @@ private:
 
         for (auto& child : node->children)
             collect(child.second.get(), result);
+    }
+
+    void writeNodeJson(std::ostream& out, const Node* node) const {
+        out << "{\"terminal\":" << (node->terminal ? "true" : "false")
+            << ",\"productIds\":[";
+        for (std::size_t i = 0; i < node->productIds.size(); ++i) {
+            if (i) out << ",";
+            out << "\"" << jsonEscape(node->productIds[i]) << "\"";
+        }
+        out << "],\"children\":[";
+        std::vector<char> keys;
+        for (const auto& item : node->children) keys.push_back(item.first);
+        std::sort(keys.begin(), keys.end());
+        for (std::size_t i = 0; i < keys.size(); ++i) {
+            if (i) out << ",";
+            char key = keys[i];
+            out << "{\"char\":\"" << jsonEscape(std::string(1, key))
+                << "\",\"node\":";
+            writeNodeJson(out, node->children.at(key).get());
+            out << "}";
+        }
+        out << "]}";
     }
 
 public:
@@ -258,6 +355,8 @@ public:
         collect(current, result);
         return result;
     }
+
+    void writeSnapshot(std::ostream& out) const { writeNodeJson(out, &root); }
 };
 
 // 4. MIN HEAP: Products with lowest stock first
@@ -320,6 +419,17 @@ public:
         if (!heap.empty()) siftDown(0);
         return result;
     }
+
+    void writeSnapshot(std::ostream& out) const {
+        out << "[";
+        for (std::size_t i = 0; i < heap.size(); ++i) {
+            if (i) out << ",";
+            out << "{\"stock\":" << heap[i].stock
+                << ",\"productId\":\""
+                << jsonEscape(heap[i].productId) << "\"}";
+        }
+        out << "]";
+    }
 };
 
 // 5. FIFO QUEUE: Restocking requests
@@ -346,6 +456,19 @@ public:
 
     std::size_t size() const {
         return requests.size();
+    }
+
+    void writeSnapshot(std::ostream& out) const {
+        std::queue<std::string> copy = requests;
+        out << "[";
+        bool first = true;
+        while (!copy.empty()) {
+            if (!first) out << ",";
+            first = false;
+            out << "\"" << jsonEscape(copy.front()) << "\"";
+            copy.pop();
+        }
+        out << "]";
     }
 };
 

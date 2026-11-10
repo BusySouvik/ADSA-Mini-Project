@@ -74,6 +74,29 @@ async function request<T>(
 }
 
 
+export interface AdsaSnapshot {
+  avl: AvlNode | null;
+  rotations: { type: "LL" | "RR" | "LR" | "RL"; pivotPrice: number }[];
+  hash: { index: number; entries: { key: string; productId: string; name: string }[] }[];
+  trie: TrieNode;
+  heap: { stock: number; productId: string }[];
+  fifo: string[];
+  productCount: number;
+}
+export interface AvlNode {
+  price: number;
+  height: number;
+  balance: number;
+  productIds: string[];
+  left: AvlNode | null;
+  right: AvlNode | null;
+}
+export interface TrieNode {
+  terminal: boolean;
+  productIds: string[];
+  children: { char: string; node: TrieNode }[];
+}
+
 export interface RestockRequest {
   id: string;
   owner_id: string;
@@ -161,6 +184,14 @@ export const api = {
       {},
       true
     ),
+
+  getOwnerAdsaSnapshot: () =>
+    request<{
+      snapshot: AdsaSnapshot;
+      products: Product[];
+      pendingRestockCount: number;
+      source: string;
+    }>("/api/owner/adsa/snapshot", {}, true),
   getRestockRequests: () =>
     request<{ requests: RestockRequest[] }>(
       "/api/owner/restock-requests",

@@ -1,4 +1,4 @@
-﻿#include "engine.hpp"
+#include "engine.hpp"
 #include <sstream>
 #include <stdexcept>
 
@@ -42,12 +42,17 @@ int main() {
     }
 
     std::vector<Product> products;
+    std::vector<std::string> requestIds;
     std::string line;
 
     while (std::getline(std::cin, line)) {
         if (line.empty()) continue;
 
         auto fields = split(line, '|');
+        if (!fields.empty() && fields[0] == "Q" && fields.size() >= 2) {
+            requestIds.push_back(fields[1]);
+            continue;
+        }
         if (fields.size() < 5) continue;
 
         try {
@@ -76,7 +81,23 @@ int main() {
         minHeap.push(p.stock, p.id);
     }
 
-    if (mode == "autocomplete") {
+    if (mode == "visualize") {
+        for (const auto& id : requestIds) queue.addRequest(id);
+        std::cout << "{\"avl\":";
+        avl.writeSnapshot(std::cout);
+        std::cout << ",\"rotations\":";
+        avl.writeRotationEvents(std::cout);
+        std::cout << ",\"hash\":";
+        hashTable.writeSnapshot(std::cout);
+        std::cout << ",\"trie\":";
+        trie.writeSnapshot(std::cout);
+        std::cout << ",\"heap\":";
+        minHeap.writeSnapshot(std::cout);
+        std::cout << ",\"fifo\":";
+        queue.writeSnapshot(std::cout);
+        std::cout << ",\"productCount\":" << products.size() << "}";
+    }
+    else if (mode == "autocomplete") {
         if (command.size() < 2) return 1;
         for (const auto& id : trie.autocomplete(command[1]))
             std::cout << id << '\n';

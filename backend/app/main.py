@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 import subprocess
 import os
 from typing import Optional
@@ -751,9 +751,90 @@ async def adsa_restock_queue(threshold: int = 5):
     ids = await run_adsa_engine("restock_queue", str(threshold))
     return {"operation": "fifo_restock_queue", "results": ids}
 
+@app.get("/api/owner/adsa/snapshot")
+async def get_owner_adsa_snapshot(auth=Depends(require_owner)):
+    """Return real C++ structure snapshots for the authenticated owner's data."""
+    owner_id = auth["user"]["id"]
+    products = await db_request(
+        "GET",
+        "products",
+        token=auth["token"],
+        params={
+            "select": "id,product_code,name,price,stock",
+            "owner_id": f"eq.{owner_id}",
+            "order": "created_at.asc,id.asc",
+        },
+    )
+    if not isinstance(products, list):
+        raise HTTPException(status_code=502, detail="Could not retrieve owner inventory.")
 
+    pending = await db_request(
+        "GET",
+        "restock_requests",
+        token=auth["token"],
+        params={
+            "select": "id",
+            "owner_id": f"eq.{owner_id}",
+            "status": "eq.pending",
+            "order": "created_at.asc,id.asc",
+            "limit": "500",
+        },
+    )
+    if not isinstance(pending, list):
+        raise HTTPException(status_code=502, detail="Could not retrieve pending restock requests.")
 
+    if not ADSA_EXECUTABLE.exists():
+        raise HTTPException(status_code=500, detail="ADSA executable not found. Build the C++ engine first.")
 
+    lines = ["visualize"]
+    for product in products:
+        name = str(product.get("name") or "").replace("|", " ").replace("\\n", " ")
+        product_id = str(product.get("id") or "")
+        product_code = str(product.get("product_code") or "").replace("|", " ")
+        price = str(product.get("price") or 0)
+        stock = str(product.get("stock") or 0)
+        if product_id:
+            lines.append(f"{product_id}|{product_code}|{name}|{price}|{stock}")
+    for request in pending:
+        request_id = str(request.get("id") or "")
+        if request_id:
+            lines.append(f"Q|{request_id}")
 
+    try:
+        result = subprocess.run(
+            [str(ADSA_EXECUTABLE)],
+            input="\n".join(lines) + "\n",
+            capture_output=True,
+            text=True,
+            timeout=15,
+            env={
+                **os.environ,
+                "PATH": os.pathsep.join([
+                    r"C:\msys64\ucrt64\bin",
+                    r"C:\msys64\usr\bin",
+                    os.environ.get("PATH", ""),
+                ]),
+            },
+        )
+    except subprocess.TimeoutExpired:
+        raise HTTPException(status_code=504, detail="ADSA snapshot generation timed out.")
 
+    if result.returncode != 0:
+        raise HTTPException(
+            status_code=500,
+            detail="ADSA snapshot failed: " + result.stderr[:500],
+        )
+
+    import json
+    try:
+        snapshot = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=502, detail="C++ ADSA engine returned invalid snapshot data.")
+
+    return {
+        "snapshot": snapshot,
+        "products": products,
+        "pendingRestockCount": len(pending),
+        "source": "C++ engine structures built from this owner's inventory and pending restock requests",
+    }
 

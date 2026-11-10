@@ -376,6 +376,7 @@ export default function OwnerDashboard() {
         <div className="sidebar-label">WORKSPACE</div>
         <a href="/admin" className="sidebar-link active"><Boxes size={18}/> Overview</a>
         <a href="#inventory" className="sidebar-link"><Package size={18}/> Products & Inventory</a>
+        <a href="/admin/adsa" className="sidebar-link"><Boxes size={18}/> ADSA Visualizer</a>
         <div className="sidebar-bottom">
           <div className="owner-avatar">O</div>
           <div className="owner-user-info">
