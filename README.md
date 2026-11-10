@@ -1,4 +1,4 @@
-﻿# Shop-Corner 2.0
+﻿# Shop-Corner
 
 A full-stack shop and inventory management system developed as an ADSA mini-project. It supports customers and shop owners, with data structures and algorithms implemented in C++ and integrated through a FastAPI backend.
 
