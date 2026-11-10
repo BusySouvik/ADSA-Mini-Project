@@ -1,4 +1,4 @@
-﻿from pathlib import Path
+from pathlib import Path
 import subprocess
 import os
 from typing import Optional
@@ -28,7 +28,14 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL, "http://127.0.0.1:5173"],
+    allow_origins=list(dict.fromkeys([
+        FRONTEND_URL,
+        "https://trikstarevitrace.in",
+        "https://www.trikstarevitrace.in",
+        "https://frontend-pi-pied-93.vercel.app",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ])),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
