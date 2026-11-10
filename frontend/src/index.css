@@ -1,0 +1,85 @@
+﻿@import "tailwindcss";
+
+:root {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+
+  --cream: #F3EEE3;
+  --ink: #111111;
+  --burnt-orange: #D9541E;
+
+  --cream-light: #FAF8F3;
+  --cream-dark: #E8E0D2;
+  --ink-soft: #39352F;
+  --orange-hover: #BD4316;
+
+  --border: #DED6C9;
+  --muted: #81796F;
+
+  color: var(--ink);
+  background: var(--cream);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--cream);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--burnt-orange);
+  color: white;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.brand-bg {
+  background-color: var(--cream);
+}
+
+.brand-dark {
+  background-color: var(--ink);
+}
+
+.brand-accent {
+  background-color: var(--burnt-orange);
+}
+
+.brand-text {
+  color: var(--ink);
+}
+
+.brand-orange-text {
+  color: var(--burnt-orange);
+}

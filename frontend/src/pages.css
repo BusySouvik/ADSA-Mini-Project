@@ -1,0 +1,252 @@
+﻿.auth-page,
+.simple-page {
+  min-height: 100vh;
+  background: #f3eee3;
+  color: #111;
+}
+
+.page-header {
+  min-height: 76px;
+  padding: 0 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(17,17,17,.12);
+}
+
+.page-brand {
+  color: #111;
+  text-decoration: none;
+  font-size: 25px;
+  font-weight: 750;
+  letter-spacing: -1.5px;
+}
+
+.page-brand .brand-dot { color: #d9541e; }
+
+.back-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.auth-layout {
+  width: min(1100px, 86%);
+  min-height: calc(100vh - 76px);
+  margin: auto;
+  padding: 75px 0;
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  align-items: center;
+  gap: 90px;
+}
+
+.auth-intro h1,
+.simple-page-content h1 {
+  margin: 18px 0;
+  font-size: clamp(44px, 6vw, 76px);
+  line-height: 1.02;
+  letter-spacing: -4px;
+  font-weight: 600;
+}
+
+.auth-intro > p,
+.simple-page-content > p {
+  max-width: 470px;
+  color: #68645d;
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.eyebrow {
+  color: #d9541e;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 2px;
+}
+
+.auth-form {
+  padding: 36px;
+  border: 1px solid #e0d8ca;
+  border-radius: 12px;
+  background: #faf8f3;
+  box-shadow: 0 18px 50px rgba(40,30,15,.07);
+}
+
+.auth-form h2 {
+  margin: 0 0 8px;
+  font-size: 29px;
+  letter-spacing: -1px;
+}
+
+.auth-form > p {
+  color: #777168;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.auth-form label {
+  display: block;
+  margin: 22px 0 8px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.auth-form input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ded7cb;
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+  outline: none;
+}
+
+.auth-form input:focus {
+  border-color: #d9541e;
+}
+
+.page-primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 15px 20px;
+  border: 0;
+  border-radius: 6px;
+  background: #d9541e;
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-form .page-primary-button {
+  width: 100%;
+}
+
+.auth-switch {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 13px;
+  color: #68645d;
+}
+
+.auth-switch a {
+  color: #d9541e;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.form-note {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 11px !important;
+  color: #999 !important;
+}
+
+.role-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 35px;
+}
+
+.role-switch a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid #dcd4c7;
+  border-radius: 6px;
+  color: #555;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.role-switch a.selected {
+  border-color: #d9541e;
+  background: #f8e5d9;
+  color: #b63d10;
+}
+
+.simple-page-content {
+  width: min(900px, 86%);
+  margin: auto;
+  padding: 110px 0;
+}
+
+.simple-page-content .page-primary-button {
+  margin-top: 30px;
+}
+
+@media (max-width: 800px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+    gap: 35px;
+    padding: 55px 0;
+  }
+  .auth-form { padding: 26px; }
+  .auth-intro h1,
+  .simple-page-content h1 {
+    letter-spacing: -2px;
+  }
+}
+
+/* Customer and owner entry actions */
+.entry-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 30px;
+}
+
+.entry-actions .page-primary-button {
+  margin-top: 0;
+}
+
+.entry-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 20px;
+  border: 1px solid #cfc5b6;
+  border-radius: 6px;
+  color: #111;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.entry-secondary-button:hover {
+  background: #e9dfd0;
+  border-color: #d9541e;
+}
+
+.auth-message {
+  margin: 15px 0;
+  padding: 12px;
+  border-radius: 6px;
+  background: #f8e5d9;
+  color: #9f3510 !important;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.auth-form button:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.page-loading {
+  padding: 100px 7%;
+  color: #68645d;
+}
