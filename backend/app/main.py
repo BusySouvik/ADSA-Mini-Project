@@ -468,7 +468,7 @@ async def update_order_status(
 
 ADSA_EXECUTABLE = (
     Path(__file__).resolve().parents[2]
-    / "cpp_engine" / "build" / "shop_corner_adsa.exe"
+    / "cpp_engine" / "build" / ("shop_corner_adsa.exe" if os.name == "nt" else "shop_corner_adsa")
 )
 
 async def run_adsa_engine(mode: str, arg1: str = "", arg2: str = ""):
@@ -525,12 +525,7 @@ async def run_fifo_engine(request_ids: list[str]) -> list[str]:
     if not request_ids:
         return []
 
-    engine_path = (
-        Path(__file__).resolve().parents[2]
-        / "cpp_engine"
-        / "build"
-        / "shop_corner_adsa.exe"
-    )
+    engine_path = ADSA_EXECUTABLE
 
     if not engine_path.exists():
         raise HTTPException(
