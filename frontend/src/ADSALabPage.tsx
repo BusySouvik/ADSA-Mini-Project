@@ -6,29 +6,112 @@ import { supabase } from "./lib/supabase";
 import "./ADSALabPage.css";
 
 function AvlTree({ node, activePrice }: { node: AvlNode | null; activePrice: number | null }) {
-  if (!node) return <div className="adsa-empty-structure">No products yet - AVL tree is empty.</div>;
-  const width = (n: AvlNode | null): number => !n ? 0 : Math.max(1, width(n.left) + width(n.right));
-  const span = Math.max(1, width(node));
-  const levels = (n: AvlNode | null): number => !n ? 0 : 1 + Math.max(levels(n.left), levels(n.right));
-  const height = levels(node);
-  const nodes: { n: AvlNode; x: number; y: number; parentX?: number; parentY?: number }[] = [];
-  const walk = (n: AvlNode | null, start: number, depth: number, parent?: {x:number;y:number}) => {
-    if (!n) return;
-    const leftWidth = width(n.left);
-    const x = ((start + leftWidth + 0.5) / span) * Math.max(760, span * 92);
-    const y = 52 + depth * 112;
-    nodes.push({n,x,y,parentX:parent?.x,parentY:parent?.y});
-    walk(n.left,start,depth+1,{x,y}); walk(n.right,start+leftWidth+1,depth+1,{x,y});
+  if (!node) {
+    return <div className="adsa-empty-structure">No products yet - AVL tree is empty.</div>;
+  }
+
+  // Count every real node. The previous implementation counted only child
+  // subtrees, which placed right-side nodes beyond the SVG viewBox.
+  const countNodes = (current: AvlNode | null): number =>
+    current ? 1 + countNodes(current.left) + countNodes(current.right) : 0;
+
+  const getTreeHeight = (current: AvlNode | null): number =>
+    current ? 1 + Math.max(getTreeHeight(current.left), getTreeHeight(current.right)) : 0;
+
+  const nodeCount = countNodes(node);
+  const treeHeight = getTreeHeight(node);
+  const horizontalGap = 112;
+  const svgWidth = Math.max(760, 80 + Math.max(0, nodeCount - 1) * horizontalGap);
+  const svgHeight = Math.max(170, 52 + Math.max(0, treeHeight - 1) * 108 + 68);
+  const nodes: { n: AvlNode; x: number; y: number }[] = [];
+  const positions = new Map<AvlNode, { x: number; y: number }>();
+  let inorderIndex = 0;
+
+  // In-order placement gives each node a unique horizontal slot and keeps
+  // left descendants left of their parent and right descendants right of it.
+  const placeNodes = (current: AvlNode | null, depth: number): void => {
+    if (!current) return;
+    placeNodes(current.left, depth + 1);
+
+    const x = ((inorderIndex + 0.5) / nodeCount) * svgWidth;
+    const y = 52 + depth * 108;
+    inorderIndex += 1;
+    nodes.push({ n: current, x, y });
+    positions.set(current, { x, y });
+
+    placeNodes(current.right, depth + 1);
   };
-  walk(node,0,0);
-  const svgWidth = Math.max(760, span*92);
-  return <div className="adsa-tree-scroll"><svg className="adsa-tree-svg" width={svgWidth} height={Math.max(160,height*112+30)} viewBox={`0 0 ${svgWidth} ${Math.max(160,height*112+30)}`}>
-    {nodes.filter(v=>v.parentX!==undefined).map((v,i)=><line key={`e${i}`} x1={v.parentX} y1={v.parentY!+22} x2={v.x} y2={v.y-22} className="adsa-edge"/>)}
-    {nodes.map(({n,x,y})=><g key={`${n.price}-${x}`} className={activePrice===n.price?"adsa-node active":"adsa-node"}>
-      <circle cx={x} cy={y} r="27"/><text x={x} y={y+4} textAnchor="middle">{n.price.toLocaleString("en-IN",{maximumFractionDigits:0})}</text>
-      <text x={x} y={y+43} textAnchor="middle" className="adsa-node-meta">h:{n.height} | bf:{n.balance}</text>
-    </g>)}
-  </svg></div>;
+
+  placeNodes(node, 0);
+
+  const edges: { key: string; x1: number; y1: number; x2: number; y2: number }[] = [];
+  const addEdges = (parent: AvlNode | null): void => {
+    if (!parent) return;
+    const from = positions.get(parent);
+    if (!from) return;
+
+    ([parent.left, parent.right] as (AvlNode | null)[]).forEach((child) => {
+      if (!child) return;
+      const to = positions.get(child);
+      if (!to) return;
+
+      // Stop each connector at the edge of the node circles rather than
+      // drawing underneath the node.
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const distance = Math.hypot(dx, dy) || 1;
+      const radius = 28;
+      edges.push({
+        key: `${parent.price}-${child.price}`,
+        x1: from.x + (dx / distance) * radius,
+        y1: from.y + (dy / distance) * radius,
+        x2: to.x - (dx / distance) * radius,
+        y2: to.y - (dy / distance) * radius,
+      });
+      addEdges(child);
+    });
+  };
+
+  addEdges(node);
+
+  return (
+    <div className="adsa-tree-scroll" role="region" aria-label="Scrollable AVL tree visualization" tabIndex={0}>
+      <svg
+        className="adsa-tree-svg"
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        role="img"
+        aria-label={`AVL price index containing ${nodeCount} nodes and ${treeHeight} levels`}
+        preserveAspectRatio="xMidYMin meet"
+      >
+        {edges.map((edge) => (
+          <line
+            key={edge.key}
+            x1={edge.x1}
+            y1={edge.y1}
+            x2={edge.x2}
+            y2={edge.y2}
+            className="adsa-edge"
+          />
+        ))}
+        {nodes.map(({ n, x, y }, index) => (
+          <g
+            key={`${n.price}-${index}`}
+            className={activePrice === n.price ? "adsa-node active" : "adsa-node"}
+          >
+            <circle cx={x} cy={y} r="27" />
+            <text x={x} y={y + 4} textAnchor="middle">
+              {n.price.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+            </text>
+            <text x={x} y={y + 43} textAnchor="middle" className="adsa-node-meta">
+              h:{n.height} | bf:{n.balance}
+            </text>
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
 }
 function TrieBranch({ node, label="ROOT", depth=0 }: {node:TrieNode;label?:string;depth?:number}) {
   return <div className="trie-branch" style={{"--depth":depth} as CSSProperties}>

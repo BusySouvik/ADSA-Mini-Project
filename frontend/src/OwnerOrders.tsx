@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "./lib/api";
 import { ClipboardList, RefreshCw } from "lucide-react";
 
@@ -16,7 +16,7 @@ type OwnerOrder = {
   }[];
 };
 
-const statuses = ["confirmed", "processing", "shipped", "delivered", "cancelled"];
+const statuses = ["confirmed", "processing", "shipped", "delivered"];
 
 export default function OwnerOrders() {
   const [orders, setOrders] = useState<OwnerOrder[]>([]);
@@ -44,6 +44,29 @@ export default function OwnerOrders() {
       await loadOrders();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not update order.");
+    } finally {
+      setSavingId("");
+    }
+  }
+
+  async function cancelOwnerOrder(id: string) {
+    if (!window.confirm("Cancel this order and restore its product stock?")) {
+      return;
+    }
+
+    setSavingId(id);
+    setError("");
+
+    try {
+      await api.cancelOwnerOrder(id);
+
+      setOrders(prev => prev.map(order =>
+        order.id === id
+          ? { ...order, status: "cancelled" }
+          : order
+      ));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not cancel order.");
     } finally {
       setSavingId("");
     }
@@ -99,15 +122,25 @@ export default function OwnerOrders() {
                 <span>Customer: {order.customer_id.slice(0, 8)}...</span>
                 <select
                   value={order.status}
-                  disabled={savingId === order.id}
+                  disabled={savingId === order.id || order.status === "cancelled"}
                   onChange={e => void updateStatus(order.id, e.target.value)}
                 >
-                  {["pending", ...statuses].map(status => (
-                    <option key={status} value={status}>
+                  {["pending", ...statuses, "cancelled"].map(status => (
+                    <option key={status} value={status} disabled={status === "cancelled"}>
                       {status.charAt(0).toUpperCase() + status.slice(1)}
                     </option>
                   ))}
                 </select>
+
+                {["pending", "confirmed", "processing"].includes(order.status) && (
+                  <button
+                    className="order-cancel-button"
+                    disabled={savingId === order.id}
+                    onClick={() => void cancelOwnerOrder(order.id)}
+                  >
+                    {savingId === order.id ? "Cancelling..." : "Cancel order"}
+                  </button>
+                )}
               </div>
             </article>
           ))}

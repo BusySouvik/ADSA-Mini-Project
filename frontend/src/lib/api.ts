@@ -1,4 +1,4 @@
-﻿import { supabase } from "./supabase";
+import { supabase } from "./supabase";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
@@ -246,6 +246,20 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ items }),
       },
+      true
+    ),
+
+  cancelOrder: (id: string) =>
+    request<any>(
+      `/api/orders/${encodeURIComponent(id)}/cancel`,
+      { method: "POST" },
+      true
+    ),
+
+  cancelOwnerOrder: (id: string) =>
+    request<any>(
+      `/api/owner/orders/${encodeURIComponent(id)}/cancel`,
+      { method: "POST" },
       true
     ),
 

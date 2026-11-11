@@ -30,3 +30,14 @@ Thumbs.db
 
 # Temporary source backups
 *.stage1-backup-*
+
+# Supabase local CLI state
+supabase/.temp/
+
+# Temporary backups
+*.backup
+*.before-*
+
+# Local ADSA visualizer helper files
+Add-ADSAVisualizer.ps1
+adsa-visualizer-context.txt

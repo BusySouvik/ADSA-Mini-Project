@@ -417,6 +417,19 @@ async def get_customer_order(
     }
 
 
+@app.post("/api/orders/{order_id}/cancel")
+async def cancel_customer_order(
+    order_id: UUID,
+    auth=Depends(require_customer),
+):
+    return await db_request(
+        "POST",
+        "rpc/cancel_order",
+        auth["token"],
+        body={"p_order_id": str(order_id)},
+    )
+
+
 # ---------------- OWNER ORDER MANAGEMENT ----------------
 
 @app.get("/api/owner/orders")
@@ -433,9 +446,22 @@ async def owner_orders(auth=Depends(require_owner)):
     )
 
 
+@app.post("/api/owner/orders/{order_id}/cancel")
+async def cancel_owner_order(
+    order_id: UUID,
+    auth=Depends(require_owner),
+):
+    return await db_request(
+        "POST",
+        "rpc/cancel_order",
+        auth["token"],
+        body={"p_order_id": str(order_id)},
+    )
+
+
 class OrderStatusUpdate(BaseModel):
     status: str = Field(
-        pattern="^(confirmed|processing|shipped|delivered|cancelled)$"
+        pattern="^(confirmed|processing|shipped|delivered)$"
     )
 
 
@@ -445,7 +471,7 @@ async def update_order_status(
     update: OrderStatusUpdate,
     auth=Depends(require_owner),
 ):
-    # Confirm this order contains a product owned by this owner.
+    # Verify that this order contains a product owned by this owner.
     items = await db_request(
         "GET",
         "order_items",
@@ -459,6 +485,26 @@ async def update_order_status(
 
     if not items:
         raise HTTPException(404, "Order not found for this store")
+
+    # Read the current database status before allowing an update.
+    order = await db_request(
+        "GET",
+        "orders",
+        auth["token"],
+        params={
+            "select": "id,status",
+            "id": f"eq.{order_id}",
+        },
+    )
+
+    if not order:
+        raise HTTPException(404, "Order not found")
+
+    if order[0]["status"] == "cancelled":
+        raise HTTPException(
+            status_code=409,
+            detail="Cancelled orders cannot be processed or reopened.",
+        )
 
     result = await db_request(
         "PATCH",
@@ -505,13 +551,20 @@ async def run_adsa_engine(mode: str, arg1: str = "", arg2: str = ""):
                 f"{product_id}|{product_code}|{name}|{price}|{stock}"
             )
 
+    engine_env = os.environ.copy()
+    engine_env["PATH"] = (
+        r"C:\msys64\ucrt64\bin"
+        + os.pathsep
+        + engine_env.get("PATH", "")
+    )
     try:
         result = subprocess.run(
             [str(ADSA_EXECUTABLE)],
             input="\n".join(lines) + "\n",
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
+            env=engine_env
         )
     except subprocess.TimeoutExpired:
         raise HTTPException(status_code=504, detail="ADSA engine timed out.")

@@ -1,6 +1,6 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "./lib/api";
-import { Package, RefreshCw, ArrowLeft, ChevronRight } from "lucide-react";
+import { Package, RefreshCw, ArrowLeft, ChevronRight, XCircle } from "lucide-react";
 
 type Order = {
   id: string;
@@ -24,6 +24,7 @@ export default function CustomerOrders() {
   const [selected, setSelected] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [cancelling, setCancelling] = useState(false);
 
   async function loadOrders() {
     setLoading(true);
@@ -43,6 +44,37 @@ export default function CustomerOrders() {
       setSelected(await api.getOrder(id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not load order details.");
+    }
+  }
+
+  async function cancelSelectedOrder() {
+    if (!selected || selected.order.status !== "pending") return;
+
+    if (!window.confirm("Are you sure you want to cancel this order? The reserved stock will be restored.")) {
+      return;
+    }
+
+    setCancelling(true);
+    setError("");
+
+    try {
+      const orderId = selected.order.id;
+      await api.cancelOrder(orderId);
+
+      setSelected(prev => prev ? {
+        ...prev,
+        order: { ...prev.order, status: "cancelled" }
+      } : prev);
+
+      setOrders(prev => prev.map(order =>
+        order.id === orderId
+          ? { ...order, status: "cancelled" }
+          : order
+      ));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not cancel order.");
+    } finally {
+      setCancelling(false);
     }
   }
 
@@ -101,6 +133,17 @@ export default function CustomerOrders() {
             <span>Order total</span>
             <strong>₹{Number(selected.order.total_amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</strong>
           </div>
+
+          {selected.order.status === "pending" && (
+            <button
+              className="order-cancel-button"
+              onClick={() => void cancelSelectedOrder()}
+              disabled={cancelling}
+            >
+              <XCircle size={16} />
+              {cancelling ? "Cancelling..." : "Cancel order"}
+            </button>
+          )}
         </div>
       ) : loading ? (
         <div className="shop-state"><RefreshCw className="shop-spinner"/><p>Loading your orders...</p></div>

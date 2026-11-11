@@ -686,3 +686,40 @@
     height: 140px;
   }
 }
+
+/* Order cancellation action */
+.order-cancel-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  border: 1px solid #d9541e;
+  background: transparent;
+  color: #b3441b;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.order-cancel-button:hover:not(:disabled) {
+  background: #d9541e;
+  color: #fffdf8;
+}
+
+.order-cancel-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.owner-order-footer .order-cancel-button {
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .owner-order-footer .order-cancel-button {
+    width: 100%;
+  }
+}

@@ -1,4 +1,4 @@
-﻿.adsa-lab-page {
+.adsa-lab-page {
   min-height: 100vh;
   padding: 38px clamp(18px, 4vw, 60px) 55px;
   background: #f3eee3;
@@ -43,8 +43,8 @@
 .adsa-pill { background:#f8e5d9; color:#b94013; border:1px solid #edc7b3; border-radius:30px; padding:8px 12px; font-size:11px; }
 .adsa-error { max-width:1500px; margin:0 auto 16px; padding:12px 15px; background:#f8e5d9; border:1px solid #e9b69d; color:#a83219; border-radius:8px; }
 .adsa-loading,.adsa-empty-structure { color:#777168; padding:30px; text-align:center; }
-.adsa-tree-scroll,.trie-scroll { overflow:auto; background:#f3eee3; border:1px solid #e3dbce; border-radius:9px; padding:15px; }
-.adsa-tree-svg { display:block; margin:auto; min-width:100%; }
+.adsa-tree-scroll,.trie-scroll { overflow:auto; max-width:100%; background:#f3eee3; border:1px solid #e3dbce; border-radius:9px; padding:15px; overscroll-behavior:contain; }\n.adsa-tree-scroll:focus-visible { outline:2px solid #d9541e; outline-offset:3px; }
+.adsa-tree-svg { display:block; margin:0 auto; min-width:100%; max-width:none; flex:none; }
 .adsa-edge { stroke:#b9ad9c; stroke-width:2; }
 .adsa-node circle { fill:#29251f; stroke:#d9541e; stroke-width:2; transition:all .35s; }
 .adsa-node text { fill:#fffaf2; font:600 12px monospace; }
