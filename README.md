@@ -203,15 +203,39 @@ The project focuses on:
 
 ---
 
-## Project Information
+## ✨ THE MINDS BEHIND SHOP-CORNER
 
-| Detail | Description |
-|---|---|
-| Project | Shop-Corner 2.0 |
-| Category | ADSA Mini Project |
-| Domain | Full-Stack Web Development |
-| Core Focus | Data Structures and Algorithms Integration |
+### 🚀 Three Minds. One Vision. Limitless Innovation.
+
+Shop-Corner is built through collaboration, creativity, and a shared passion for technology. Every idea, every line of code, and every feature represents our collective effort.
+
+### 👨‍💻 MEET THE TEAM
+
+<table align="center">
+  <tr>
+    <td align="center" width="33%">
+      <h2>👨‍💻</h2>
+      <h3>SOUVIK</h3>
+      <sub>Project Team Member</sub>
+    </td>
+    <td align="center" width="33%">
+      <h2>👨‍💻</h2>
+      <h3>ADITY</h3>
+      <sub>Project Team Member</sub>
+    </td>
+    <td align="center" width="33%">
+      <h2>👨‍💻</h2>
+      <h3>JATIN</h3>
+      <sub>Project Team Member</sub>
+    </td>
+  </tr>
+</table>
 
 <p align="center">
-  <b>Built with ❤️ using React, FastAPI, Supabase, and C++17.</b>
+  <strong>ONE TEAM. ONE VISION. ONE POWERFUL BUILD.</strong>
+  <br/>
+  <em>Turning ideas into innovation, together.</em>
 </p>
+
+---
+
