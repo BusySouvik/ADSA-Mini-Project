@@ -165,7 +165,7 @@ The application is deployed using separate frontend and backend hosting platform
 | Database | Supabase | PostgreSQL |
 | Authentication | Supabase | Supabase Auth |
 
-**Live Website:** [Shop-Corner 2.0](https://www.trikstarevitrace.in/)
+**Live Website:** [Shop-Corner](https://www.trikstarevitrace.in/)
 
 ---
 
