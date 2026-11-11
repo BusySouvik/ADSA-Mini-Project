@@ -8,16 +8,16 @@
 </p>
 
 <p align="center">
-  <a href="https://frontend-pi-pied-93.vercel.app/">
+  <a href="https://www.trikstarevitrace.in/">
     <img src="https://img.shields.io/badge/🚀_Live_Demo-Visit_Shop--Corner-D9541E?style=for-the-badge" alt="Live Demo">
   </a>
 </p>
 
 ---
 
-## 🌐 Live Application
+## Live Application
 
-**[🚀 Visit Shop-Corner 2.0](https://frontend-pi-pied-93.vercel.app/)**
+**[Visit Shop-Corner](https://www.trikstarevitrace.in/)**
 
 Explore the platform through separate customer and shop owner experiences.
 
