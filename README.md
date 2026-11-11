@@ -203,13 +203,13 @@ The project focuses on:
 
 ---
 
-## ✨ THE MINDS BEHIND SHOP-CORNER
+## THE MINDS BEHIND SHOP-CORNER
 
-### 🚀 Three Minds. One Vision. Limitless Innovation.
+### Three Minds. One Vision. Limitless Innovation.
 
 Shop-Corner is built through collaboration, creativity, and a shared passion for technology. Every idea, every line of code, and every feature represents our collective effort.
 
-### 👨‍💻 MEET THE TEAM
+### MEET THE TEAM
 
 <table align="center">
   <tr>
