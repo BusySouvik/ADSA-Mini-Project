@@ -23,7 +23,7 @@ Explore the platform through separate customer and shop owner experiences.
 
 ---
 
-## 🧰 Technology Stack
+## Technology Stack
 
 | Layer | Technologies |
 |---|---|
@@ -36,9 +36,9 @@ Explore the platform through separate customer and shop owner experiences.
 
 ---
 
-## ✨ Main Features
+## Main Features
 
-### 🛒 Customer
+### Customer
 
 - Browse and search available products.
 - Filter products by category and price range.
@@ -48,7 +48,7 @@ Explore the platform through separate customer and shop owner experiences.
 - Cancel eligible pending orders.
 - Track order status.
 
-### 🏪 Shop Owner
+### Shop Owner
 
 - Add, edit, and delete inventory products.
 - View inventory statistics and stock information.
@@ -60,7 +60,7 @@ Explore the platform through separate customer and shop owner experiences.
 
 ---
 
-## ⚡ Data Structures and Algorithms
+## Data Structures and Algorithms
 
 The C++ engine supports the following ADSA operations:
 
@@ -76,7 +76,7 @@ The FastAPI backend communicates with the C++ executable through standard input 
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 Shop-Corner follows a layered architecture in which the frontend communicates with the FastAPI backend, while Supabase handles persistent data and authentication. The backend also integrates the custom C++ ADSA engine for algorithm-based operations.
 
@@ -112,7 +112,7 @@ Shop-Corner follows a layered architecture in which the frontend communicates wi
 
 ---
 
-## 🧠 ADSA Implementation
+## Data Structure Implementation
 
 One of the primary objectives of Shop-Corner 2.0 is to demonstrate the practical application of data structures and algorithms in a real-world shopping and inventory management scenario.
 
@@ -138,7 +138,7 @@ Maintains restock requests in first-in, first-out order to ensure requests are p
 
 ---
 
-## 🗄️ Database and Authentication
+## Database and Authentication
 
 Shop-Corner uses **Supabase PostgreSQL** as its persistent database and **Supabase Auth** for user authentication.
 
@@ -154,7 +154,7 @@ Database operations are handled through the FastAPI backend and Supabase service
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 The application is deployed using separate frontend and backend hosting platforms.
 
@@ -165,56 +165,11 @@ The application is deployed using separate frontend and backend hosting platform
 | Database | Supabase | PostgreSQL |
 | Authentication | Supabase | Supabase Auth |
 
-**Live Website:** [Shop-Corner 2.0](https://frontend-pi-pied-93.vercel.app/)
+**Live Website:** [Shop-Corner 2.0](https://www.trikstarevitrace.in/)
 
 ---
 
-## 📁 Project Structure
-
-```text
-ADSA-Mini-Project/
-│
-├── backend/
-│   ├── app/
-│   │   ├── __init__.py
-│   │   └── main.py
-│   ├── .env
-│   └── requirements.txt
-│
-├── cpp_engine/
-│   ├── include/
-│   │   └── engine.hpp
-│   ├── src/
-│   │   ├── bridge.cpp
-│   │   └── main.cpp
-│   └── build/
-│       └── shop_corner_adsa.exe
-│
-├── frontend/
-│   ├── src/
-│   │   ├── lib/
-│   │   ├── assets/
-│   │   ├── App.tsx
-│   │   ├── CustomerOrders.tsx
-│   │   ├── OwnerDashboard.tsx
-│   │   ├── OwnerOrders.tsx
-│   │   └── ShopCatalogue.tsx
-│   ├── .env.local
-│   └── package.json
-│
-├── supabase/
-│   └── migrations/
-│
-├── docs/
-├── tests/
-└── README.md
-```
-
-*Note: Generated build files and local environment files are not necessarily included in the GitHub repository.*
-
----
-
-## 🔐 Security and Configuration
+## Security and Configuration
 
 - Supabase is used for authentication and persistent application data.
 - Backend endpoints handle application-level operations.
@@ -224,9 +179,9 @@ ADSA-Mini-Project/
 
 ---
 
-## 🎯 Project Objectives
+## Project Objectives
 
-Shop-Corner 2.0 aims to demonstrate how theoretical concepts from Advanced Data Structures and Algorithms can be integrated into a practical full-stack application.
+Shop-Cornervaims to demonstrate how theoretical concepts from Advanced Data Structures and Algorithms can be integrated into a practical full-stack application.
 
 The project focuses on:
 
@@ -238,7 +193,7 @@ The project focuses on:
 
 ---
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - Automated testing and expanded test coverage.
 - Advanced sales analytics and reporting.
@@ -248,7 +203,7 @@ The project focuses on:
 
 ---
 
-## 👨‍💻 Project Information
+## Project Information
 
 | Detail | Description |
 |---|---|
