@@ -1,7 +1,7 @@
 
 # 🛍️ Shop-Corner
 
-### Smart Shopping & Inventory Management System Powered by Data Structures and Algorithms
+###  Smart Shopping & Inventory Management System Powered by Data Structures and Algorithms
 
 <p align="center">
 A full-stack shop and inventory management system developed as an ADSA mini-project, combining modern web technologies with custom C++ implementations of fundamental data structures and algorithms.
