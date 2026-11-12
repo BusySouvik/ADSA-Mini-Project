@@ -11,7 +11,7 @@ A full-stack shop and inventory management system developed as an ADSA mini-proj
 
 <p align="center">
   <a href="https://www.trikstarevitrace.in/">
-    <img src="https://img.shields.io/badge/🚀_Live_Demo-Visit_Shop--Corner-D9541E?style=for-the-badge" alt="Live Demo">
+    <img src="https://img.shields.io/badge/Live_Demo-Visit_Shop--Corner-D9541E?style=for-the-badge" alt="Live Demo">
   </a>
 </p>
 
