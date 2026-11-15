@@ -23,6 +23,10 @@ A full-stack shop and inventory management system developed as an ADSA mini-proj
 
 Explore the platform through separate customer and shop owner experiences.
 
+Owner Login : 
+Email - freeeyt002@gmail.com
+Password - Souvik@11
+
 ---
 
 ## Technology Stack
